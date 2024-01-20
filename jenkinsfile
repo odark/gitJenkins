@@ -13,10 +13,12 @@ pipeline {
                 sh 'echo "I can access $BUILD_NUMBER in shell comman as well."'
             }
         }
-   
-     stage('Build image') {
-           def dockerfile       = 'Dockerfile'
-    	   def customImage = docker.build("webserver:${env.BUILD_ID}", "-f ${dockerfile} ./")
-       }
+    
+        stage('Build image') {
+            steps {
+            def dockerfile       = 'Dockerfile'
+            def customImage = docker.build("webserver:${env.BUILD_ID}", "-f ${dockerfile} ./")
+        }
+        }
     }
 }
