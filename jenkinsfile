@@ -22,7 +22,7 @@ pipeline {
         stage('Build image') {
             steps {
             //dockerfile       = 'Dockerfile'
-                customImage = docker.build("webserver:${env.BUILD_ID}", "-f ${DOCKERFILE} ./")
+                docker.build("webserver:${env.BUILD_ID}", "-f ${DOCKERFILE} ./")
             }
         }
     }
