@@ -2,6 +2,8 @@ pipeline {
     agent any
     environment {
         DOCKERFILE = "Dockerfile"
+        dockerHubRegistry = 'odark/webserver'
+        dockerHubRegistryCredential = 'dockerhub'
     }
     stages {
     	stage('Clone repository') {
@@ -24,6 +26,19 @@ pipeline {
             //dockerfile       = 'Dockerfile'
                 script {
                     docker.build("webserver:${env.BUILD_ID}", "-f ${DOCKERFILE} ./")
+                }
+            }
+        }
+        stage('Image Push') {
+            steps {
+                script {
+                    // withCredentials 블록을 사용하여 Credential ID의 정보를 가져옴
+                    withDockerRegistry([ credentialsId: dockerHubRegistryCredential, url: "" ]) {
+                        sh "docker push ${dockerHubRegistry}:${env.BUILD_ID}"
+                        sh "docker push ${dockerHubRegistry}:latest"
+
+                        sleep 10 /* Wait uploading */ 
+                    }
                 }
             }
         }
