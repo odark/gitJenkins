@@ -1,11 +1,16 @@
 pipeline {
     agent any
+    environment {
+        DOCKERFILE = "Dockerfile"
+    }
     stages {
-    	// stage('Clone repository') {
-        //     steps {
-        //         checkout scm
-        //     }
-    	// }
+    	stage('Clone repository') {
+            steps {
+                script {
+                    checkout scm
+                }
+            }
+    	}
         stage('Env Variables') {
             steps {
                 echo "The build number is ${env.BUILD_NUMBER}"
@@ -16,9 +21,9 @@ pipeline {
     
         stage('Build image') {
             steps {
-            def dockerfile       = 'Dockerfile'
-            def customImage = docker.build("webserver:${env.BUILD_ID}", "-f ${dockerfile} ./")
-        }
+            //dockerfile       = 'Dockerfile'
+                customImage = docker.build("webserver:${env.BUILD_ID}", "-f ${DOCKERFILE} ./")
+            }
         }
     }
 }
