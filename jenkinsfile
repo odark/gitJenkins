@@ -34,7 +34,7 @@ pipeline {
                 script {
                     // withCredentials 블록을 사용하여 Credential ID의 정보를 가져옴
                     withDockerRegistry([ credentialsId: dockerHubRegistryCredential, url: "" ]) {
-                        sh "docker push ${dockerHubRegistry}:${env.BUILD_ID}"
+                        sh "docker push ${dockerHubRegistry}:${env.BUILD_NUMBER}"
                         sh "docker push ${dockerHubRegistry}:latest"
 
                         sleep 10 /* Wait uploading */ 
