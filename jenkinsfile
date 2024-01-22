@@ -48,7 +48,7 @@ pipeline {
         stage('K8S Manifest Update') {
             steps {
                 script {
-                    git credentialsId: "${k8sCredential}", url: 'https://github.com/twinholic/gitKubernetes.git', branch: 'master'
+                    git credentialsId: "${k8sCredential}", url: 'https://github.com/twinholic/gitKubernetes.git', branch: 'main'
 
                     sh "sed -i 's/webserver:.*\$/webserver:${currentBuild.number}/g' deploy.yaml"
                     sh "git add deploy.yaml"
