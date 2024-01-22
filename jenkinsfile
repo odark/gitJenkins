@@ -49,12 +49,12 @@ pipeline {
             steps {
                 script {
                     git credentialsId: "${k8sCredential}", url: 'https://github.com/twinholic/gitKubernetes.git', branch: 'main'
-                    // sh "git config user.email odark@naver.com"
-                    // sh "git config user.name odark"
+                    sh "git config user.email odark@naver.com"
+                    sh "git config user.name odark"
                     sh "sed -i 's/webserver:.*\$/webserver:${currentBuild.number}/g' deploy.yaml"
                     sh "git add deploy.yaml"
                     sh "git commit -m '[UPDATE] webserver ${currentBuild.number} image versioning'"
-                    sshagent(credentials: ["${k8sCredential}"]) {
+                    sshagent(credentials: ["${k8sCredential}"], sshOpts: '-o StrictHostKeyChecking=no') {
                         sh "git remote set-url origin git@github.com:twinholic/gitKubernetes.git"
                         sh "git push -u origin main"
                     }
