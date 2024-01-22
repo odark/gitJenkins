@@ -4,6 +4,7 @@ pipeline {
         DOCKERFILE = "Dockerfile"
         dockerHubRegistry = 'odark/webserver'
         dockerHubRegistryCredential = 'dockerhub'
+        k8sCredential='odark'
     }
     stages {
     	stage('Clone repository') {
@@ -40,6 +41,28 @@ pipeline {
 
                         sleep 10 /* Wait uploading */ 
                     }
+                }
+            }
+        }
+
+        stage('K8S Manifest Update') {
+            steps {
+                git credentialsId: k8sCredential, url: 'https://github.com/twinholic/gitKubernetes.git', branch: 'master'
+
+                sh "sed -i 's/webserver:.*\$/webserver:${currentBuild.number}/g' deployment.yaml"
+                sh "git add deployment.yaml"
+                sh "git commit -m '[UPDATE] webserver ${currentBuild.number} image versioning'"
+                sshagent(credentials: [k8sCredential]) {
+                    sh "git remote set-url origin git@github.com:twinholic/gitKubernetes.git"
+                    sh "git push -u origin master"
+                }
+            }
+            post {
+                failure {
+                    echo 'K8S Manifest Update failure !'
+                }
+                success {
+                    echo 'K8S Manifest Update success !'
                 }
             }
         }
